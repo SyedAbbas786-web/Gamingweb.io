@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Neon Brick Breaker - Smash Those Bricks!</title>
     <style>
         * {
@@ -30,13 +30,269 @@
             background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));
             color: white;
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
             overflow-x: hidden;
+            touch-action: manipulation;
         }
 
         body.light-mode {
             background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
             color: var(--text-dark);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(20, 20, 30, 0.9);
+            border: 2px solid var(--neon-blue);
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .mobile-menu-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #4a00e0;
+            color: var(--text-dark);
+        }
+
+        .mobile-menu-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        /* Main Menu Screen */
+        .main-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 10, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            transition: transform 0.5s ease;
+        }
+
+        body.light-mode .main-menu {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .main-menu.hidden {
+            transform: translateY(-100%);
+            display: none;
+        }
+
+        .menu-title {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+        }
+
+        body.light-mode .menu-title {
+            background: linear-gradient(90deg, #4a00e0, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        body.light-mode .menu-subtitle {
+            color: rgba(51, 51, 51, 0.7);
+        }
+
+        .menu-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .menu-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        body.light-mode .menu-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(74, 0, 224, 0.2);
+        }
+
+        .menu-section h3 {
+            color: var(--neon-green);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        body.light-mode .menu-section h3 {
+            color: #00cc7a;
+        }
+
+        .difficulty-levels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .difficulty-level {
+            padding: 20px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        body.light-mode .difficulty-level {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .difficulty-level:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .difficulty-level.active {
+            background: var(--neon-green);
+            color: #000;
+            border-color: var(--neon-green);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 157, 0.3);
+        }
+
+        body.light-mode .difficulty-level.active {
+            background: #00cc7a;
+            color: white;
+        }
+
+        .level-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .level-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .level-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .menu-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .menu-btn {
+            padding: 18px 25px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .menu-btn-primary {
+            background: linear-gradient(135deg, var(--neon-blue), #0088ff);
+            color: white;
+        }
+
+        .menu-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid var(--neon-blue);
+        }
+
+        body.light-mode .menu-btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-dark);
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.3);
+        }
+
+        .menu-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .menu-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        body.light-mode .stat-item {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
+        }
+
+        body.light-mode .stat-value {
+            color: #00cc7a;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
         }
 
         .page-container {
@@ -86,7 +342,260 @@
             box-shadow: 0 0 20px #4a00e0;
         }
 
-        /* Difficulty Menu */
+        /* Game Container */
+        .game-container {
+            width: 100%;
+            background: rgba(20, 20, 30, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 
+                0 0 60px rgba(0, 243, 255, 0.3),
+                0 0 100px rgba(255, 0, 255, 0.2);
+            overflow: hidden;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(74, 0, 224, 0.3);
+            box-shadow: 
+                0 0 60px rgba(74, 0, 224, 0.2),
+                0 0 100px rgba(0, 255, 157, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+        }
+
+        body.light-mode .title {
+            background: linear-gradient(90deg, #4a00e0, #8e2de2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(74, 0, 224, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+        }
+
+        body.light-mode .subtitle {
+            color: rgba(51, 51, 51, 0.7);
+        }
+
+        /* Responsive Game Wrapper */
+        .game-wrapper {
+            position: relative;
+            width: 100%;
+            height: min(600px, 70vh);
+            min-height: 400px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            margin-bottom: 20px;
+            touch-action: none;
+        }
+
+        body.light-mode .game-wrapper {
+            background: rgba(0, 0, 0, 0.1);
+            border-color: rgba(74, 0, 224, 0.2);
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Touch Controls for Mobile */
+        .touch-controls {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+
+        .touch-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .touch-btn:active {
+            background: rgba(0, 243, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .stats-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .game-wrapper {
+                height: min(500px, 60vh);
+            }
+            
+            .touch-controls {
+                display: flex;
+            }
+            
+            .theme-toggle {
+                top: 80px;
+                right: 20px;
+            }
+            
+            .difficulty-levels {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-container {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-wrapper {
+                height: min(400px, 50vh);
+                min-height: 300px;
+            }
+            
+            .touch-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .menu-title {
+                font-size: 2.5rem;
+            }
+            
+            .game-container {
+                padding: 15px;
+                border-radius: 20px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .game-wrapper {
+                height: 600px;
+            }
+        }
+
+        /* Game Controls */
+        .controls-panel {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(255, 0, 255, 0.1));
+            color: white;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .light-mode .btn {
+            background: linear-gradient(135deg, rgba(74, 0, 224, 0.1), rgba(142, 45, 226, 0.1));
+            color: var(--text-dark);
+            border-color: rgba(74, 0, 224, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-blue), #0088ff);
+            border: none;
+        }
+
+        .light-mode .btn-primary {
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--neon-green), #00cc7a);
+            border: none;
+        }
+
+        .light-mode .btn-success {
+            background: linear-gradient(135deg, #00cc7a, #00a36c);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4757, #ff3838);
+            border: none;
+        }
+
+        /* Keep all existing styles */
         .difficulty-menu {
             position: fixed;
             top: 20px;
@@ -124,181 +633,6 @@
             box-shadow: 0 0 20px #00ff9d;
         }
 
-        .difficulty-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            margin-top: 10px;
-            background: rgba(20, 20, 30, 0.95);
-            border: 2px solid var(--neon-green);
-            border-radius: 15px;
-            padding: 10px;
-            min-width: 200px;
-            backdrop-filter: blur(20px);
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .light-mode .difficulty-dropdown {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: #00ff9d;
-        }
-
-        .difficulty-dropdown.active {
-            display: flex;
-        }
-
-        .difficulty-option {
-            padding: 12px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-        }
-
-        .light-mode .difficulty-option {
-            color: var(--text-dark);
-        }
-
-        .difficulty-option:hover {
-            background: rgba(0, 243, 255, 0.2);
-        }
-
-        .light-mode .difficulty-option:hover {
-            background: rgba(0, 243, 255, 0.1);
-        }
-
-        .difficulty-option.active {
-            background: var(--neon-green);
-            color: #000;
-            font-weight: bold;
-        }
-
-        .difficulty-icon {
-            font-size: 1.2em;
-        }
-
-        .game-container {
-            width: 100%;
-            background: rgba(20, 20, 30, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            border: 2px solid rgba(0, 243, 255, 0.3);
-            box-shadow: 
-                0 0 60px rgba(0, 243, 255, 0.3),
-                0 0 100px rgba(255, 0, 255, 0.2);
-            overflow: hidden;
-            padding: 30px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .light-mode .game-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(74, 0, 224, 0.3);
-            box-shadow: 
-                0 0 60px rgba(74, 0, 224, 0.2),
-                0 0 100px rgba(0, 255, 157, 0.2);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .title {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
-        }
-
-        .light-mode .title {
-            background: linear-gradient(90deg, #4a00e0, #8e2de2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(74, 0, 224, 0.3);
-        }
-
-        .subtitle {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.2rem;
-        }
-
-        .light-mode .subtitle {
-            color: rgba(51, 51, 51, 0.7);
-        }
-
-        .game-wrapper {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 2px solid rgba(0, 243, 255, 0.2);
-            margin-bottom: 20px;
-        }
-
-        .light-mode .game-wrapper {
-            background: rgba(0, 0, 0, 0.1);
-            border-color: rgba(74, 0, 224, 0.2);
-        }
-
-        #gameCanvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        .stats-panel {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        @media (max-width: 768px) {
-            .stats-panel {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .title {
-                font-size: 2.5rem;
-            }
-            .game-wrapper {
-                height: 400px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .stats-panel {
-                grid-template-columns: 1fr;
-            }
-            .title {
-                font-size: 2rem;
-            }
-            .game-wrapper {
-                height: 350px;
-            }
-            .theme-toggle, .difficulty-menu {
-                position: relative;
-                top: 0;
-                left: 0;
-                margin-bottom: 10px;
-            }
-            .theme-toggle-btn, .difficulty-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
         .stat-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
@@ -321,129 +655,6 @@
         }
 
         .light-mode .stat-label {
-            color: rgba(51, 51, 51, 0.7);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--neon-green);
-            font-family: 'Courier New', monospace;
-        }
-
-        .light-mode .stat-value {
-            color: #00cc7a;
-        }
-
-        .controls-panel {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(255, 0, 255, 0.1));
-            color: white;
-            border: 1px solid rgba(0, 243, 255, 0.3);
-        }
-
-        .light-mode .btn {
-            background: linear-gradient(135deg, rgba(74, 0, 224, 0.1), rgba(142, 45, 226, 0.1));
-            color: var(--text-dark);
-            border-color: rgba(74, 0, 224, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.3);
-        }
-
-        .light-mode .btn:hover {
-            box-shadow: 0 10px 25px rgba(74, 0, 224, 0.3);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--neon-blue), #0088ff);
-            border: none;
-        }
-
-        .light-mode .btn-primary {
-            background: linear-gradient(135deg, #4a00e0, #8e2de2);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--neon-green), #00cc7a);
-            border: none;
-        }
-
-        .light-mode .btn-success {
-            background: linear-gradient(135deg, #00cc7a, #00a36c);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff4757, #ff3838);
-            border: none;
-        }
-
-        .powerups-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-        }
-
-        .light-mode .powerups-panel {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .powerup {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .light-mode .powerup {
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        .powerup-icon {
-            font-size: 1.5rem;
-        }
-
-        .powerup-info {
-            flex: 1;
-        }
-
-        .powerup-name {
-            font-size: 0.9rem;
-            color: white;
-        }
-
-        .light-mode .powerup-name {
-            color: var(--text-dark);
-        }
-
-        .powerup-timer {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .light-mode .powerup-timer {
             color: rgba(51, 51, 51, 0.7);
         }
 
@@ -484,14 +695,6 @@
         .light-mode .level-btn.active {
             background: #4a00e0;
             color: white;
-        }
-
-        .level-btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .light-mode .level-btn:hover:not(.active) {
-            background: rgba(74, 0, 224, 0.1);
         }
 
         .game-over-screen {
@@ -538,22 +741,10 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .light-mode .game-over-title {
-            background: linear-gradient(90deg, #ff4757, #ff1493);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
         .victory-title {
             font-size: 3rem;
             margin-bottom: 20px;
             background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .light-mode .victory-title {
-            background: linear-gradient(90deg, #00cc7a, #4a00e0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -582,11 +773,6 @@
             animation: float 20s infinite linear;
         }
 
-        .light-mode .particle {
-            background: #4a00e0;
-            opacity: 0.3;
-        }
-
         @keyframes float {
             0% {
                 transform: translateY(100vh) rotate(0deg);
@@ -608,19 +794,6 @@
             text-align: center;
         }
 
-        .light-mode .instructions {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .instructions p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 10px;
-        }
-
-        .light-mode .instructions p {
-            color: rgba(51, 51, 51, 0.7);
-        }
-
         .key {
             display: inline-block;
             padding: 5px 10px;
@@ -628,57 +801,6 @@
             border-radius: 5px;
             margin: 0 5px;
             font-family: 'Courier New', monospace;
-        }
-
-        .light-mode .key {
-            background: rgba(74, 0, 224, 0.1);
-            color: #4a00e0;
-        }
-
-        .ball-trail {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--neon-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        .brick-explosion {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: var(--neon-yellow);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-            animation: explode 0.5s ease-out;
-        }
-
-        @keyframes explode {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(3);
-                opacity: 0;
-            }
-        }
-
-        .powerup-glow {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: glowPulse 1s infinite;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { transform: scale(1); opacity: 0.7; }
-            50% { transform: scale(1.2); opacity: 1; }
         }
 
         .how-to-play {
@@ -689,11 +811,6 @@
             border: 2px solid rgba(0, 243, 255, 0.3);
         }
 
-        .light-mode .how-to-play {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(74, 0, 224, 0.3);
-        }
-
         .how-to-play h2 {
             color: var(--neon-blue);
             margin-bottom: 20px;
@@ -701,26 +818,11 @@
             font-size: 2rem;
         }
 
-        .light-mode .how-to-play h2 {
-            color: #4a00e0;
-        }
-
-        .how-to-play .tips {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
         .tip-card {
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
             border-left: 4px solid var(--neon-pink);
-        }
-
-        .light-mode .tip-card {
-            background: rgba(255, 255, 255, 0.8);
-            border-left: 4px solid #8e2de2;
         }
 
         .tip-card h3 {
@@ -731,19 +833,6 @@
             gap: 10px;
         }
 
-        .light-mode .tip-card h3 {
-            color: #00cc7a;
-        }
-
-        .tip-card p {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-        }
-
-        .light-mode .tip-card p {
-            color: rgba(51, 51, 51, 0.7);
-        }
-
         .footer {
             text-align: center;
             padding: 20px;
@@ -752,40 +841,6 @@
             margin-top: 20px;
         }
 
-        .light-mode .footer {
-            color: rgba(51, 51, 51, 0.7);
-        }
-
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(10, 10, 20, 0.8);
-        }
-
-        .light-mode ::-webkit-scrollbar-track {
-            background: rgba(240, 242, 245, 0.8);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--neon-blue), var(--neon-pink));
-            border-radius: 5px;
-        }
-
-        .light-mode ::-webkit-scrollbar-thumb {
-            background: linear-gradient(#4a00e0, #8e2de2);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(var(--neon-green), var(--neon-blue));
-        }
-
-        .light-mode ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(#00cc7a, #4a00e0);
-        }
-
-        /* Difficulty indicator */
         .difficulty-indicator {
             position: absolute;
             top: 10px;
@@ -804,53 +859,118 @@
             color: white;
         }
 
-        .difficulty-hard {
-            background: linear-gradient(135deg, #ff9500, #ff5e00);
+        .difficulty-normal {
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
             color: white;
         }
 
-        .difficulty-extreme {
+        .difficulty-hard {
             background: linear-gradient(135deg, #ff4757, #ff002b);
             color: white;
+        }
+
+        .powerups-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+
+        .powerup {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .powerup-icon {
+            font-size: 1.5rem;
+        }
+
+        .powerup-name {
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .powerup-timer {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
         }
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
 
-    <!-- Theme Toggle Button -->
-    <div class="theme-toggle">
-        <button class="theme-toggle-btn" id="themeToggle">
-            <span id="themeIcon">🌙</span>
-            <span id="themeText">Dark Mode</span>
-        </button>
-    </div>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <span style="font-size: 1.5rem;">☰</span>
+    </button>
 
-    <!-- Difficulty Menu -->
-    <div class="difficulty-menu">
-        <button class="difficulty-btn" id="difficultyBtn">
-            <span id="difficultyIcon">🎮</span>
-            <span id="difficultyText">Difficulty: Easy</span>
-        </button>
-        <div class="difficulty-dropdown" id="difficultyDropdown">
-            <div class="difficulty-option active" data-difficulty="easy">
-                <span class="difficulty-icon">😊</span>
-                <span>Easy</span>
-                <small style="margin-left: auto; opacity: 0.7;">Normal speed</small>
+    <!-- Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <h1 class="menu-title">NEON BRICK BREAKER</h1>
+        <p class="menu-subtitle">Break bricks in style with neon effects!</p>
+        
+        <div class="menu-content">
+            <div class="menu-section">
+                <h3>SELECT DIFFICULTY</h3>
+                <div class="difficulty-levels" id="difficultyLevels">
+                    <div class="difficulty-level active" data-difficulty="easy">
+                        <div class="level-icon">😊</div>
+                        <div class="level-name">EASY</div>
+                        <div class="level-desc">Slow ball speed<br>Wide paddle</div>
+                    </div>
+                    <div class="difficulty-level" data-difficulty="normal">
+                        <div class="level-icon">🎯</div>
+                        <div class="level-name">NORMAL</div>
+                        <div class="level-desc">Medium ball speed<br>Normal paddle</div>
+                    </div>
+                    <div class="difficulty-level" data-difficulty="hard">
+                        <div class="level-icon">🔥</div>
+                        <div class="level-name">HARD</div>
+                        <div class="level-desc">Fast ball speed<br>Small paddle</div>
+                    </div>
+                </div>
             </div>
-            <div class="difficulty-option" data-difficulty="hard">
-                <span class="difficulty-icon">😎</span>
-                <span>Hard</span>
-                <small style="margin-left: auto; opacity: 0.7;">Faster speed</small>
+
+            <div class="menu-buttons">
+                <button class="menu-btn menu-btn-primary" id="startGameBtn">
+                    <span>🚀</span>
+                    START GAME
+                </button>
+                <button class="menu-btn menu-btn-secondary" id="continueBtn">
+                    <span>▶️</span>
+                    CONTINUE
+                </button>
+                <button class="menu-btn menu-btn-secondary" id="howToPlayBtn">
+                    <span>❓</span>
+                    HOW TO PLAY
+                </button>
+                <button class="menu-btn menu-btn-secondary" id="highScoresBtn">
+                    <span>🏆</span>
+                    HIGH SCORES
+                </button>
             </div>
-            <div class="difficulty-option" data-difficulty="extreme">
-                <span class="difficulty-icon">🔥</span>
-                <span>Extreme</span>
-                <small style="margin-left: auto; opacity: 0.7;">Very fast</small>
+
+            <div class="menu-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="menuHighScore">0</div>
+                    <div class="stat-label">HIGH SCORE</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="menuGamesPlayed">0</div>
+                    <div class="stat-label">GAMES PLAYED</div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Game Over Screen -->
     <div class="game-over-screen" id="gameOverScreen">
         <div class="game-over-content">
             <h2 class="game-over-title" id="gameOverTitle">GAME OVER</h2>
@@ -879,6 +999,7 @@
         </div>
     </div>
 
+    <!-- Main Game Container -->
     <div class="page-container">
         <div class="game-container">
             <div class="header">
@@ -914,6 +1035,11 @@
 
             <div class="game-wrapper">
                 <canvas id="gameCanvas"></canvas>
+                <!-- Touch Controls -->
+                <div class="touch-controls">
+                    <div class="touch-btn touch-left">←</div>
+                    <div class="touch-btn touch-right">→</div>
+                </div>
             </div>
 
             <div class="controls-panel">
@@ -959,14 +1085,42 @@
         <div class="footer">
             <p>Made with 💙 using HTML5 Canvas | Neon Brick Breaker © 2024</p>
             <p style="margin-top: 10px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.3);">
-                Move paddle with ← → or A D keys | Pause with SPACE | Reset with R
+                Move paddle with ← → or A D keys | Pause with SPACE | Reset with R | Menu with M
             </p>
         </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText">Dark Mode</span>
+        </button>
     </div>
 
     <script>
         class NeonBrickBreaker {
             constructor() {
+                // Initialize game properties
+                this.initGameProperties();
+                
+                // Setup all components
+                this.setupCanvas();
+                this.createParticles();
+                this.setupEventListeners();
+                this.setupTheme();
+                this.setupDifficultyLevels();
+                this.generateLevelButtons();
+                this.createLevel();
+                this.updateUI();
+                
+                // Initialize menu stats
+                this.updateMenuStats();
+                
+                console.log("🎮 Neon Brick Breaker initialized!");
+            }
+            
+            initGameProperties() {
                 // Canvas setup
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
@@ -976,16 +1130,35 @@
                 this.gamePaused = false;
                 this.score = 0;
                 this.highScore = parseInt(localStorage.getItem('brickBreakerHighScore')) || 0;
+                this.gamesPlayed = parseInt(localStorage.getItem('gamesPlayed')) || 0;
                 this.level = 1;
                 this.lives = 3;
                 this.maxLives = 3;
                 
                 // Difficulty settings
-                this.difficulty = 'easy'; // easy, hard, extreme
+                this.difficulty = 'normal';
                 this.difficultySettings = {
-                    easy: { ballSpeed: 5, paddleSpeed: 10, paddleWidth: 100 },
-                    hard: { ballSpeed: 7, paddleSpeed: 12, paddleWidth: 90 },
-                    extreme: { ballSpeed: 9, paddleSpeed: 14, paddleWidth: 80 }
+                    easy: { 
+                        ballSpeed: 4, 
+                        paddleSpeed: 8, 
+                        paddleWidth: 120,
+                        brickRows: 5,
+                        brickCols: 8
+                    },
+                    normal: { 
+                        ballSpeed: 6, 
+                        paddleSpeed: 10, 
+                        paddleWidth: 100,
+                        brickRows: 6,
+                        brickCols: 10
+                    },
+                    hard: { 
+                        ballSpeed: 8, 
+                        paddleSpeed: 12, 
+                        paddleWidth: 80,
+                        brickRows: 7,
+                        brickCols: 12
+                    }
                 };
                 
                 // Game objects
@@ -993,9 +1166,9 @@
                     x: 0,
                     y: 0,
                     radius: 10,
-                    dx: 5,
-                    dy: -5,
-                    speed: 5,
+                    dx: 0,
+                    dy: 0,
+                    speed: 6,
                     color: '#00f3ff'
                 };
                 
@@ -1034,38 +1207,16 @@
                 // Keys pressed
                 this.keys = {};
                 
-                // Initialize
-                this.init();
+                // Touch controls
+                this.touchLeft = false;
+                this.touchRight = false;
+                
+                // Check if mobile
+                this.isMobile = this.checkIfMobile();
             }
             
-            init() {
-                console.log("🏀 Initializing Brick Breaker...");
-                
-                // Setup canvas
-                this.setupCanvas();
-                
-                // Setup particles
-                this.createParticles();
-                
-                // Setup event listeners
-                this.setupEventListeners();
-                
-                // Setup theme
-                this.setupTheme();
-                
-                // Setup difficulty
-                this.setupDifficulty();
-                
-                // Generate level buttons
-                this.generateLevelButtons();
-                
-                // Create first level
-                this.createLevel();
-                
-                // Update UI
-                this.updateUI();
-                
-                console.log("✅ Game initialized!");
+            checkIfMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             }
             
             setupCanvas() {
@@ -1079,8 +1230,16 @@
                 
                 this.ball.x = this.canvas.width / 2;
                 this.ball.y = this.paddle.y - this.ball.radius;
+                this.ball.dx = this.difficultySettings[this.difficulty].ballSpeed;
+                this.ball.dy = -this.difficultySettings[this.difficulty].ballSpeed;
                 
-                console.log(`Canvas size: ${this.canvas.width}x${this.canvas.height}`);
+                console.log(`📱 ${this.isMobile ? 'Mobile' : 'Desktop'} mode | Canvas: ${this.canvas.width}x${this.canvas.height}`);
+                
+                // Show/hide touch controls based on device
+                const touchControls = document.querySelector('.touch-controls');
+                if (touchControls) {
+                    touchControls.style.display = this.isMobile ? 'flex' : 'none';
+                }
             }
             
             createParticles() {
@@ -1096,7 +1255,7 @@
                     const left = Math.random() * 100;
                     const duration = Math.random() * 20 + 10;
                     const delay = Math.random() * 5;
-                    const hue = isLightMode ? 270 : 180; // Purple for light mode, blue for dark
+                    const hue = isLightMode ? 270 : 180;
                     
                     particle.style.cssText = `
                         width: ${size}px;
@@ -1112,16 +1271,57 @@
             }
             
             setupEventListeners() {
-                // Start button
+                // Mobile menu button
+                document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                    this.toggleMenu();
+                });
+                
+                // Menu buttons
+                document.getElementById('startGameBtn').addEventListener('click', () => {
+                    this.hideMenu();
+                    this.resetGame();
+                    this.startGame();
+                });
+                
+                document.getElementById('continueBtn').addEventListener('click', () => {
+                    this.hideMenu();
+                    if (!this.gameRunning) {
+                        this.startGame();
+                    } else if (this.gamePaused) {
+                        this.togglePause();
+                    }
+                });
+                
+                document.getElementById('howToPlayBtn').addEventListener('click', () => {
+                    alert(`HOW TO PLAY:\n\n🎯 Objective: Break all bricks to advance\n🎮 Controls: Use arrow keys or A/D to move\n📱 Mobile: Use touch buttons or swipe\n⚡ Power-ups: Catch falling items for abilities\n💥 Strategy: Aim for corners to break more bricks!`);
+                });
+                
+                document.getElementById('highScoresBtn').addEventListener('click', () => {
+                    alert(`HIGH SCORES:\n\n🏆 Current High Score: ${this.highScore}\n🎮 Games Played: ${this.gamesPlayed}\n🌟 Your Best Level: ${localStorage.getItem('bestLevel') || 1}`);
+                });
+                
+                // Difficulty level selection
+                document.querySelectorAll('.difficulty-level').forEach(level => {
+                    level.addEventListener('click', (e) => {
+                        const difficulty = e.currentTarget.dataset.difficulty;
+                        this.setDifficulty(difficulty);
+                        
+                        // Update active state
+                        document.querySelectorAll('.difficulty-level').forEach(l => {
+                            l.classList.toggle('active', l === e.currentTarget);
+                        });
+                    });
+                });
+                
+                // Theme toggle
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+                
+                // Game control buttons
                 document.getElementById('startBtn').addEventListener('click', () => this.startGame());
-                
-                // Pause button
                 document.getElementById('pauseBtn').addEventListener('click', () => this.togglePause());
-                
-                // Reset button
                 document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
-                
-                // Quit button
                 document.getElementById('quitBtn').addEventListener('click', () => this.showMenu());
                 
                 // Game over buttons
@@ -1135,6 +1335,59 @@
                     document.getElementById('gameOverScreen').style.display = 'none';
                     this.showMenu();
                 });
+                
+                // Touch controls
+                const touchLeft = document.querySelector('.touch-left');
+                const touchRight = document.querySelector('.touch-right');
+                
+                if (touchLeft && touchRight) {
+                    // Touch start
+                    touchLeft.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        this.touchLeft = true;
+                        touchLeft.style.background = 'rgba(0, 243, 255, 0.3)';
+                    });
+                    
+                    touchRight.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        this.touchRight = true;
+                        touchRight.style.background = 'rgba(0, 243, 255, 0.3)';
+                    });
+                    
+                    // Touch end
+                    touchLeft.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        this.touchLeft = false;
+                        touchLeft.style.background = '';
+                    });
+                    
+                    touchRight.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        this.touchRight = false;
+                        touchRight.style.background = '';
+                    });
+                    
+                    // Also support mouse for testing
+                    touchLeft.addEventListener('mousedown', () => {
+                        this.touchLeft = true;
+                        touchLeft.style.background = 'rgba(0, 243, 255, 0.3)';
+                    });
+                    
+                    touchRight.addEventListener('mousedown', () => {
+                        this.touchRight = true;
+                        touchRight.style.background = 'rgba(0, 243, 255, 0.3)';
+                    });
+                    
+                    touchLeft.addEventListener('mouseup', () => {
+                        this.touchLeft = false;
+                        touchLeft.style.background = '';
+                    });
+                    
+                    touchRight.addEventListener('mouseup', () => {
+                        this.touchRight = false;
+                        touchRight.style.background = '';
+                    });
+                }
                 
                 // Keyboard controls
                 document.addEventListener('keydown', (e) => {
@@ -1150,6 +1403,11 @@
                     if (e.code === 'KeyR') {
                         this.resetGame();
                     }
+                    
+                    // M for menu
+                    if (e.code === 'KeyM') {
+                        this.toggleMenu();
+                    }
                 });
                 
                 document.addEventListener('keyup', (e) => {
@@ -1163,17 +1421,12 @@
                     this.render();
                 });
                 
-                // Mouse/touch controls
+                // Mouse/touch paddle control
                 this.canvas.addEventListener('mousemove', (e) => {
                     if (this.gameRunning && !this.gamePaused) {
                         const rect = this.canvas.getBoundingClientRect();
                         this.paddle.x = e.clientX - rect.left - this.paddle.width / 2;
-                        
-                        // Keep paddle in bounds
-                        if (this.paddle.x < 0) this.paddle.x = 0;
-                        if (this.paddle.x + this.paddle.width > this.canvas.width) {
-                            this.paddle.x = this.canvas.width - this.paddle.width;
-                        }
+                        this.clampPaddle();
                     }
                 });
                 
@@ -1183,14 +1436,17 @@
                         const rect = this.canvas.getBoundingClientRect();
                         const touch = e.touches[0];
                         this.paddle.x = touch.clientX - rect.left - this.paddle.width / 2;
-                        
-                        // Keep paddle in bounds
-                        if (this.paddle.x < 0) this.paddle.x = 0;
-                        if (this.paddle.x + this.paddle.width > this.canvas.width) {
-                            this.paddle.x = this.canvas.width - this.paddle.width;
-                        }
+                        this.clampPaddle();
                     }
                 }, { passive: false });
+            }
+            
+            clampPaddle() {
+                // Keep paddle in bounds
+                if (this.paddle.x < 0) this.paddle.x = 0;
+                if (this.paddle.x + this.paddle.width > this.canvas.width) {
+                    this.paddle.x = this.canvas.width - this.paddle.width;
+                }
             }
             
             setupTheme() {
@@ -1233,56 +1489,28 @@
                 this.createParticles();
             }
             
-            setupDifficulty() {
-                const difficultyBtn = document.getElementById('difficultyBtn');
-                const difficultyDropdown = document.getElementById('difficultyDropdown');
-                const difficultyText = document.getElementById('difficultyText');
-                const difficultyOptions = document.querySelectorAll('.difficulty-option');
+            setupDifficultyLevels() {
+                // Set initial difficulty
+                this.setDifficulty(this.difficulty);
                 
-                // Check saved difficulty
-                const savedDifficulty = localStorage.getItem('brickBreakerDifficulty') || 'easy';
-                this.setDifficulty(savedDifficulty);
-                
-                // Toggle dropdown
-                difficultyBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    difficultyDropdown.classList.toggle('active');
-                });
-                
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!difficultyBtn.contains(e.target) && !difficultyDropdown.contains(e.target)) {
-                        difficultyDropdown.classList.remove('active');
+                // Mark initial active difficulty
+                document.querySelectorAll('.difficulty-level').forEach(level => {
+                    if (level.dataset.difficulty === this.difficulty) {
+                        level.classList.add('active');
                     }
-                });
-                
-                // Difficulty option selection
-                difficultyOptions.forEach(option => {
-                    option.addEventListener('click', () => {
-                        const difficulty = option.dataset.difficulty;
-                        this.setDifficulty(difficulty);
-                        
-                        // Update active state
-                        difficultyOptions.forEach(opt => opt.classList.remove('active'));
-                        option.classList.add('active');
-                        
-                        // Update button text
-                        difficultyText.textContent = `Difficulty: ${option.dataset.difficulty.charAt(0).toUpperCase() + option.dataset.difficulty.slice(1)}`;
-                        
-                        // Close dropdown
-                        difficultyDropdown.classList.remove('active');
-                        
-                        // Update game if running
-                        if (this.gameRunning) {
-                            this.applyDifficultySettings();
-                        }
-                    });
                 });
             }
             
             setDifficulty(difficulty) {
                 this.difficulty = difficulty;
                 localStorage.setItem('brickBreakerDifficulty', difficulty);
+                
+                // Update brick layout based on difficulty
+                const settings = this.difficultySettings[difficulty];
+                this.brickRows = settings.brickRows;
+                this.brickCols = settings.brickCols;
+                
+                // Apply settings
                 this.applyDifficultySettings();
             }
             
@@ -1291,20 +1519,18 @@
                 
                 // Update ball speed
                 this.ball.speed = settings.ballSpeed;
-                const currentSpeed = Math.sqrt(this.ball.dx * this.ball.dx + this.ball.dy * this.ball.dy);
-                const ratio = this.ball.speed / currentSpeed;
-                this.ball.dx *= ratio;
-                this.ball.dy *= ratio;
                 
                 // Update paddle
                 this.paddle.speed = settings.paddleSpeed;
                 this.paddle.width = settings.paddleWidth;
                 
-                // Update paddle x to keep it centered
+                // Center paddle
                 this.paddle.x = (this.canvas.width - this.paddle.width) / 2;
                 
-                // Update UI
+                // Update UI indicator
                 this.updateDifficultyIndicator();
+                
+                console.log(`⚡ Difficulty set to: ${this.difficulty.toUpperCase()}`);
             }
             
             updateDifficultyIndicator() {
@@ -1322,6 +1548,28 @@
                 // Add to canvas wrapper
                 const gameWrapper = document.querySelector('.game-wrapper');
                 gameWrapper.appendChild(indicator);
+            }
+            
+            toggleMenu() {
+                const menu = document.getElementById('mainMenu');
+                menu.classList.toggle('hidden');
+                this.updateMenuStats();
+            }
+            
+            hideMenu() {
+                const menu = document.getElementById('mainMenu');
+                menu.classList.add('hidden');
+            }
+            
+            showMenu() {
+                const menu = document.getElementById('mainMenu');
+                menu.classList.remove('hidden');
+                this.updateMenuStats();
+            }
+            
+            updateMenuStats() {
+                document.getElementById('menuHighScore').textContent = this.highScore.toLocaleString();
+                document.getElementById('menuGamesPlayed').textContent = this.gamesPlayed;
             }
             
             generateLevelButtons() {
@@ -1392,8 +1640,8 @@
                 // Reset ball and paddle
                 this.ball.x = this.canvas.width / 2;
                 this.ball.y = this.paddle.y - this.ball.radius;
-                this.ball.dx = 5;
-                this.ball.dy = -5;
+                this.ball.dx = this.difficultySettings[this.difficulty].ballSpeed;
+                this.ball.dy = -this.difficultySettings[this.difficulty].ballSpeed;
                 
                 this.paddle.x = (this.canvas.width - this.paddle.width) / 2;
                 this.paddle.y = this.canvas.height - 40;
@@ -1401,26 +1649,40 @@
                 // Clear power-ups and particles
                 this.powerUps = [];
                 this.particles = [];
+                this.activePowerUps = [];
                 
-                // Apply difficulty settings
-                this.applyDifficultySettings();
+                // Update power-ups panel
+                this.updatePowerUpsPanel();
                 
                 // Update UI
                 this.updateUI();
+                
+                // Render
+                this.render();
             }
             
             startGame() {
-                if (this.gameRunning) return;
+                if (this.gameRunning) {
+                    // If game is already running, restart
+                    this.resetGame();
+                }
                 
                 this.gameRunning = true;
                 this.gamePaused = false;
+                this.gamesPlayed++;
+                localStorage.setItem('gamesPlayed', this.gamesPlayed);
                 
                 // Update button text
                 document.getElementById('startBtn').textContent = 'RESTART';
                 document.getElementById('pauseBtn').textContent = 'PAUSE';
                 
+                // Hide menu
+                this.hideMenu();
+                
                 // Start game loop
                 this.gameLoop();
+                
+                console.log("🚀 Game started!");
             }
             
             togglePause() {
@@ -1428,6 +1690,8 @@
                 
                 this.gamePaused = !this.gamePaused;
                 document.getElementById('pauseBtn').textContent = this.gamePaused ? 'RESUME' : 'PAUSE';
+                
+                console.log(this.gamePaused ? "⏸️ Game paused" : "▶️ Game resumed");
             }
             
             gameLoop() {
@@ -1446,19 +1710,15 @@
             }
             
             update() {
-                // Move paddle with keyboard
-                if (this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']) {
+                // Move paddle with keyboard or touch
+                if (this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A'] || this.touchLeft) {
                     this.paddle.x -= this.paddle.speed;
                 }
-                if (this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) {
+                if (this.keys['ArrowRight'] || this.keys['d'] || this.keys['D'] || this.touchRight) {
                     this.paddle.x += this.paddle.speed;
                 }
                 
-                // Keep paddle in bounds
-                if (this.paddle.x < 0) this.paddle.x = 0;
-                if (this.paddle.x + this.paddle.width > this.canvas.width) {
-                    this.paddle.x = this.canvas.width - this.paddle.width;
-                }
+                this.clampPaddle();
                 
                 // Move ball
                 this.ball.x += this.ball.dx;
@@ -1467,12 +1727,10 @@
                 // Ball collision with walls
                 if (this.ball.x + this.ball.radius > this.canvas.width || this.ball.x - this.ball.radius < 0) {
                     this.ball.dx = -this.ball.dx;
-                    this.playSound('wall');
                 }
                 
                 if (this.ball.y - this.ball.radius < 0) {
                     this.ball.dy = -this.ball.dy;
-                    this.playSound('wall');
                 }
                 
                 // Ball collision with paddle
@@ -1490,9 +1748,6 @@
                     
                     // Add some randomness
                     this.ball.dx += (Math.random() - 0.5) * 2;
-                    
-                    // Play sound
-                    this.playSound('paddle');
                     
                     // Create paddle hit particles
                     this.createParticlesAt(this.ball.x, this.ball.y, 10, this.paddle.color);
@@ -1549,9 +1804,6 @@
                                 }
                             }
                             
-                            // Play sound
-                            this.playSound(brick.hits > 0 ? 'hit' : 'break');
-                            
                             break;
                         }
                     }
@@ -1573,7 +1825,6 @@
                         // Activate power-up
                         this.activatePowerUp(powerUp);
                         this.powerUps.splice(i, 1);
-                        this.playSound('powerup');
                         continue;
                     }
                     
@@ -1654,10 +1905,10 @@
                     // Apply power-up effect
                     switch (powerUp.type) {
                         case 'expand':
-                            this.paddle.width = this.difficulty === 'extreme' ? 120 : 150;
+                            this.paddle.width = 150;
                             break;
                         case 'shrink':
-                            this.paddle.width = this.difficulty === 'extreme' ? 50 : 60;
+                            this.paddle.width = 60;
                             break;
                         case 'slow':
                             this.ball.speed *= 0.7;
@@ -1670,13 +1921,13 @@
                             this.ball.dy *= 1.5;
                             break;
                         case 'multiball':
-                            // Create extra balls (simplified - in full game you'd manage multiple balls)
+                            // Create extra balls (simplified)
                             for (let i = 0; i < 2; i++) {
                                 this.createParticlesAt(this.ball.x, this.ball.y, 20, '#00f3ff');
                             }
                             break;
                         case 'laser':
-                            // Laser ability (visual effect only in this simplified version)
+                            // Laser ability
                             this.createParticlesAt(this.paddle.x + this.paddle.width / 2, this.paddle.y, 15, '#ff6b6b');
                             break;
                         case 'shield':
@@ -1700,7 +1951,6 @@
                     case 'slow':
                     case 'fast':
                         this.ball.speed = this.difficultySettings[this.difficulty].ballSpeed;
-                        // Reset ball speed to normal (simplified)
                         const speed = Math.sqrt(this.ball.dx * this.ball.dx + this.ball.dy * this.ball.dy);
                         const ratio = this.ball.speed / speed;
                         this.ball.dx *= ratio;
@@ -1775,8 +2025,8 @@
                     // Reset ball
                     this.ball.x = this.canvas.width / 2;
                     this.ball.y = this.paddle.y - this.ball.radius;
-                    this.ball.dx = 5 * (Math.random() > 0.5 ? 1 : -1);
-                    this.ball.dy = -5;
+                    this.ball.dx = this.difficultySettings[this.difficulty].ballSpeed * (Math.random() > 0.5 ? 1 : -1);
+                    this.ball.dy = -this.difficultySettings[this.difficulty].ballSpeed;
                     
                     // Reset paddle size (in case of power-ups)
                     this.paddle.width = this.difficultySettings[this.difficulty].paddleWidth;
@@ -1784,9 +2034,6 @@
                     // Clear active power-ups
                     this.activePowerUps = [];
                     this.updatePowerUpsPanel();
-                    
-                    // Play sound
-                    this.playSound('loseLife');
                     
                     // Update UI
                     this.updateUI();
@@ -1796,6 +2043,12 @@
             nextLevel() {
                 this.level++;
                 this.score += 1000 * this.level;
+                
+                // Save best level
+                const bestLevel = parseInt(localStorage.getItem('bestLevel')) || 1;
+                if (this.level > bestLevel) {
+                    localStorage.setItem('bestLevel', this.level);
+                }
                 
                 // Increase difficulty with level
                 if (this.level % 3 === 0) {
@@ -1808,9 +2061,6 @@
                 
                 // Create next level
                 this.createLevel();
-                
-                // Play sound
-                this.playSound('levelUp');
                 
                 // Show level up message
                 this.showMessage(`LEVEL ${this.level}!`, '#00ff9d');
@@ -1826,7 +2076,7 @@
                 }
                 
                 // Update game over screen
-                const victory = this.level > 10; // Simplified victory condition
+                const victory = this.level > 10;
                 document.getElementById('gameOverTitle').textContent = victory ? 'VICTORY!' : 'GAME OVER';
                 document.getElementById('gameOverTitle').className = victory ? 'victory-title' : 'game-over-title';
                 
@@ -1837,14 +2087,6 @@
                 
                 // Show game over screen
                 document.getElementById('gameOverScreen').style.display = 'flex';
-                
-                // Play sound
-                this.playSound(victory ? 'victory' : 'gameOver');
-            }
-            
-            showMenu() {
-                this.resetGame();
-                document.getElementById('gameOverScreen').style.display = 'none';
             }
             
             resetGame() {
@@ -1880,6 +2122,8 @@
                 
                 // Render
                 this.render();
+                
+                console.log("🔄 Game reset");
             }
             
             showMessage(text, color) {
@@ -1924,7 +2168,7 @@
                 // Clear canvas
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Draw background gradient based on theme
+                // Draw background gradient
                 const isLightMode = document.body.classList.contains('light-mode');
                 const gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
                 
@@ -1977,14 +2221,12 @@
                             brick.x, brick.y + brick.height
                         );
                         
-                        // Adjust color based on hits remaining
                         const intensity = 0.3 + (brick.hits / brick.maxHits) * 0.7;
                         const r = parseInt(brick.color.slice(1, 3), 16);
                         const g = parseInt(brick.color.slice(3, 5), 16);
                         const b = parseInt(brick.color.slice(5, 7), 16);
                         
                         if (isLightMode) {
-                            // Light mode colors are more pastel
                             brickGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${intensity * 0.7})`);
                             brickGradient.addColorStop(1, `rgba(${r * 0.7}, ${g * 0.7}, ${b * 0.7}, ${intensity * 0.7})`);
                         } else {
@@ -2077,121 +2319,6 @@
                     this.ctx.textAlign = 'center';
                     this.ctx.textBaseline = 'middle';
                     this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
-                }
-            }
-            
-            playSound(type) {
-                // Simple Web Audio API sounds
-                try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    switch(type) {
-                        case 'wall':
-                        case 'paddle':
-                            oscillator.frequency.value = 400;
-                            oscillator.type = 'sine';
-                            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.1);
-                            break;
-                            
-                        case 'hit':
-                            oscillator.frequency.value = 300;
-                            oscillator.type = 'square';
-                            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.1);
-                            break;
-                            
-                        case 'break':
-                            oscillator.frequency.value = 600;
-                            oscillator.type = 'sine';
-                            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.2);
-                            break;
-                            
-                        case 'powerup':
-                            oscillator.frequency.value = 800;
-                            oscillator.type = 'sine';
-                            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.3);
-                            break;
-                            
-                        case 'loseLife':
-                            oscillator.frequency.value = 200;
-                            oscillator.type = 'sine';
-                            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 0.5);
-                            break;
-                            
-                        case 'levelUp':
-                            const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
-                            let time = audioContext.currentTime;
-                            
-                            frequencies.forEach((freq, index) => {
-                                setTimeout(() => {
-                                    const osc = audioContext.createOscillator();
-                                    const gain = audioContext.createGain();
-                                    
-                                    osc.connect(gain);
-                                    gain.connect(audioContext.destination);
-                                    
-                                    osc.frequency.value = freq;
-                                    osc.type = 'sine';
-                                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                                    
-                                    osc.start();
-                                    osc.stop(audioContext.currentTime + 0.2);
-                                }, index * 150);
-                            });
-                            break;
-                            
-                        case 'victory':
-                            const victoryNotes = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C5, E5, G5, C6, E6
-                            victoryNotes.forEach((freq, index) => {
-                                setTimeout(() => {
-                                    const osc = audioContext.createOscillator();
-                                    const gain = audioContext.createGain();
-                                    
-                                    osc.connect(gain);
-                                    gain.connect(audioContext.destination);
-                                    
-                                    osc.frequency.value = freq;
-                                    osc.type = 'sine';
-                                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                                    
-                                    osc.start();
-                                    osc.stop(audioContext.currentTime + 0.3);
-                                }, index * 200);
-                            });
-                            break;
-                            
-                        case 'gameOver':
-                            oscillator.frequency.value = 150;
-                            oscillator.type = 'sine';
-                            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                            oscillator.start();
-                            oscillator.stop(audioContext.currentTime + 1);
-                            break;
-                    }
-                } catch (e) {
-                    console.log('Audio not supported:', e);
                 }
             }
         }
